@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import io.github.Jonathan_Lin_162.hackathon_project.core.App;
@@ -90,14 +91,27 @@ public class Window implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String input = textarea.getText();
-        System.out.println(input);
-        try {
-            App.execute(input);
-        } catch (Exception e1) {
-			e1.printStackTrace();
-		}
 
+        String input = textarea.getText();
+        textarea2.setText(""); // clear old response
+
+        new Thread(() -> {
+
+            try {
+
+                App.execute(input, chunk -> {
+
+                    SwingUtilities.invokeLater(() -> {
+                        textarea2.append(chunk);
+                    });
+
+                });
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+        }).start();
     }
 
 }

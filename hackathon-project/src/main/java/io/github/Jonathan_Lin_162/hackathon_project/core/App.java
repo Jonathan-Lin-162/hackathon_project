@@ -13,58 +13,52 @@ public class App {
 	
 	private static String modelName = "llama3.1";
 
-    public static void execute(String input) throws Exception {
+	public static void execute(String input, java.util.function.Consumer<String> onChunk) throws Exception {
 
-            chat.addUserMessage(input);
+	    chat.addUserMessage(input);
 
-            String promptText = chat.buildPrompt();
-            
-            URL url = new URL("http://localhost:11434/api/generate");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json; utf-8");
-            conn.setDoOutput(true);
+	    String promptText = chat.buildPrompt();
 
-            JSONObject request = new JSONObject();
-            request.put("model", modelName);
-            request.put("prompt", promptText);
-            request.put("stream", true);
+	    URL url = new URL("http://localhost:11434/api/generate");
+	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	    conn.setRequestMethod("POST");
+	    conn.setRequestProperty("Content-Type", "application/json; utf-8");
+	    conn.setDoOutput(true);
 
-            String jsonInput = request.toString();
+	    JSONObject request = new JSONObject();
+	    request.put("model", modelName);
+	    request.put("prompt", promptText);
+	    request.put("stream", true);
 
-            try (OutputStream os = conn.getOutputStream()) {
-                os.write(jsonInput.getBytes(StandardCharsets.UTF_8));
-            }
+	    try (OutputStream os = conn.getOutputStream()) {
+	        os.write(request.toString().getBytes(StandardCharsets.UTF_8));
+	    }
 
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)
-            );
+	    BufferedReader reader = new BufferedReader(
+	            new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)
+	    );
 
-            StringBuilder fullResponse = new StringBuilder();
-            String line;
-            System.out.println("\nAI:");
-            while ((line = reader.readLine()) != null) {
-                JSONObject chunk = new JSONObject(line);
+	    StringBuilder fullResponse = new StringBuilder();
+	    String line;
 
-                if (chunk.has("response")) {
-                    String text = chunk.getString("response");
-                    fullResponse.append(text);
-                    for (char c : text.toCharArray()) {
-                        System.out.print(c);
-                    }
-                }
+	    while ((line = reader.readLine()) != null) {
 
-                if (chunk.optBoolean("done")) {
-                    break;
-                }
-            }
+	        JSONObject chunk = new JSONObject(line);
 
-            reader.close();
+	        if (chunk.has("response")) {
+	            String text = chunk.getString("response");
+	            fullResponse.append(text);
 
-            String aiResponse = fullResponse.toString();
-            
-            System.out.println("\n");
+	            onChunk.accept(text);   // send chunk to UI
+	        }
 
-            chat.addAssistantMessage(aiResponse);
-        }
+	        if (chunk.optBoolean("done")) {
+	            break;
+	        }
+	    }
+
+	    reader.close();
+
+	    chat.addAssistantMessage(fullResponse.toString());
+	}
 }
