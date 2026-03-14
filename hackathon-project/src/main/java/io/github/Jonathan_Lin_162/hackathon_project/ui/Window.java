@@ -21,11 +21,15 @@ public class Window implements ActionListener {
     private JTextArea textarea;
     private JPanel mainPanel;
     private JButton button;
+    
+    private JLabel label2;
+    private JScrollPane scrollPane2;
+    private JTextArea textarea2; // for the ai
 
     
     public Window() {        
         frame = new JFrame("Project Name");
-        frame.setSize(700, 500);
+        frame.setSize(400, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainPanel = new JPanel();
         
@@ -35,9 +39,15 @@ public class Window implements ActionListener {
         button = new JButton("Go");
         button.addActionListener(this);
         
+        label2 = new JLabel("AI response: ");
+        textarea2 = new JTextArea(5, 30);
+        scrollPane2 = new JScrollPane(textarea2);
+        
         mainPanel.add(label);
         mainPanel.add(scrollPane);
         mainPanel.add(button);
+        mainPanel.add(label2);
+        mainPanel.add(scrollPane2);
         
         frame.add(mainPanel);
         
