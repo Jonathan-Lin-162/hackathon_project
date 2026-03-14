@@ -34,7 +34,7 @@ public class App {
         System.out.println("AI Chat started. Type 'exit' to quit the program.");
         System.out.print("You: ");
     	
-    	promptText = systemPrompt + scan.nextLine();
+    	promptText = scan.nextLine() + systemPrompt;
         while (true) {
 
             URL url = new URL("http://localhost:11434/api/generate");
@@ -82,13 +82,13 @@ public class App {
             reader.close();
             
         	System.out.print("You: ");
-        	input = scan.nextLine();
+        	promptText = scan.nextLine();
         	
-        	if (input.equalsIgnoreCase("exit")) {
+        	if (promptText.equalsIgnoreCase("exit")) {
         		System.out.println("Goodbye!");
         		break;
         	}
-        	promptText = systemPrompt + input;
+        	promptText += systemPrompt;
         }
         scan.close();
     }
