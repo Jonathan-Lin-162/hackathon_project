@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import org.json.JSONObject;
 
 public class App {
-	
+
 	private static OllamaChat chat = new OllamaChat();
 
     public static void execute(String input) throws Exception {
@@ -31,7 +31,6 @@ public class App {
         }
 
     private static String sendStreamingRequest(String promptText, String modelName) throws Exception {
-
         URL url = new URL("http://localhost:11434/api/generate");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
