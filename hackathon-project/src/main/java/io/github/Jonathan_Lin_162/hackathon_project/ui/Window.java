@@ -3,7 +3,10 @@ package io.github.Jonathan_Lin_162.hackathon_project.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-
+import com.formdev.flatlaf.FlatLightLaf;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,11 +24,15 @@ public class Window implements ActionListener {
     private JTextArea textarea;
     private JPanel mainPanel;
     private JButton button;
+    
+    private JLabel label2;
+    private JScrollPane scrollPane2;
+    private JTextArea textarea2; // for the ai
 
     
     public Window() {        
         frame = new JFrame("Project Name");
-        frame.setSize(700, 500);
+        frame.setSize(400, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainPanel = new JPanel();
         
@@ -35,9 +42,19 @@ public class Window implements ActionListener {
         button = new JButton("Go");
         button.addActionListener(this);
         
+        label2 = new JLabel("AI response: ");
+        textarea2 = new JTextArea(5, 30);
+        scrollPane2 = new JScrollPane(textarea2);
+        
+        mainPanel.setBorder(new EmptyBorder(20 ,20, 20, 20));
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        
+        
         mainPanel.add(label);
         mainPanel.add(scrollPane);
         mainPanel.add(button);
+        mainPanel.add(label2);
+        mainPanel.add(scrollPane2);
         
         frame.add(mainPanel);
         
@@ -53,7 +70,6 @@ public class Window implements ActionListener {
         } catch (Exception e1) {
 			e1.printStackTrace();
 		}
-
     }
 
 }
