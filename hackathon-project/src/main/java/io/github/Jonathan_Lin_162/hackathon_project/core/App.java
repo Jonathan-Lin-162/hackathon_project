@@ -1,4 +1,4 @@
-package io.github.Jonathan_Lin_162.hackathon_project;
+package io.github.Jonathan_Lin_162.hackathon_project.core;
 
 import java.io.*;
 import java.net.HttpURLConnection;
