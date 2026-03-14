@@ -8,11 +8,11 @@ import java.nio.charset.StandardCharsets;
 import org.json.JSONObject;
 
 public class App {
-    public static void main(String[] args) throws IOException {
-
-        String modelName = "llama3.1";
-        String promptText = "What does this error mean? Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 3";
-
+    public static void execute(String input) throws IOException {
+        
+        String modelName = "llama3.1"; 
+        String promptText = input;
+        
         URL url = new URL("http://localhost:11434/api/generate");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -47,7 +47,6 @@ public class App {
 
                 for (char c : text.toCharArray()) {
                     System.out.print(c);
-
                 }
             }
 
