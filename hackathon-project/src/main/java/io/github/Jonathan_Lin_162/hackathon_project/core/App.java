@@ -4,53 +4,31 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
 
 import org.json.JSONObject;
 
 public class App {
+	
+	private static OllamaChat chat = new OllamaChat();
 
-    public static void main(String[] args) throws Exception {
+    public static void execute(String input) throws Exception {
 
-        Scanner scan = new Scanner(System.in);
-        OllamaChat chat = new OllamaChat();
+            chat.addUserMessage(input);
 
-        System.out.println("AI Chat started. Type 'exit' to quit the program.");
-
-        while (true) {
-
-            System.out.print("You: ");
-            String userInput = scan.nextLine();
-
-            if (userInput.equalsIgnoreCase("exit")) {
-                System.out.println("Goodbye!");
-                break;
-            }
-
-            // Add user input to history
-            chat.addUserMessage(userInput);
-
-            // Prepare prompt including conversation history
             String promptText = chat.buildPrompt();
 
-            // Send streaming request
             String aiResponse = sendStreamingRequest(promptText, "llama3.1");
 
-            System.out.println("\nAI:\n");
+            System.out.println("\nAI:");
 
-            // Print typing effect
             for (char c : aiResponse.toCharArray()) {
                 System.out.print(c);
-                Thread.sleep(15); // adjust speed
+                Thread.sleep(15);
             }
             System.out.println("\n");
 
-            // Add assistant response to history
             chat.addAssistantMessage(aiResponse);
         }
-
-        scan.close();
-    }
 
     private static String sendStreamingRequest(String promptText, String modelName) throws Exception {
 

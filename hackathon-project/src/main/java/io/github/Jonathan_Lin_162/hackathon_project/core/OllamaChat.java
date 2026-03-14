@@ -26,7 +26,7 @@ public class OllamaChat {
         for (String msg : history) {
             sb.append(msg).append("\n");
         }
-        sb.append("AI: "); // AI will continue from here
+        sb.append("AI: ");
         return sb.toString();
     }
 }

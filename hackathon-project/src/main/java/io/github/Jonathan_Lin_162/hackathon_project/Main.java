@@ -1,4 +1,7 @@
+
 package io.github.Jonathan_Lin_162.hackathon_project;
+
+import java.io.IOException;
 
 import javax.swing.SwingUtilities;
 
@@ -6,7 +9,7 @@ import io.github.Jonathan_Lin_162.hackathon_project.ui.Window;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -14,6 +17,7 @@ public class Main {
                 new Window();
             }
         });
+        
 
     }
 
