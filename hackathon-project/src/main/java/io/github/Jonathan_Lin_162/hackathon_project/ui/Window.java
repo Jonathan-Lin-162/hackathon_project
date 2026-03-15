@@ -87,14 +87,12 @@ public class Window implements ActionListener {
         radioPanel.add(radioBtn2);
         radioBtn1.addActionListener(e -> {
             if (radioBtn1.isSelected()) {
-                System.out.println("Radio button 1 pressed");
                 chat.setSystemPrompt("Give concise answer.");
                 //chat = new OllamaChat("Give concise answer.");
             }
         });
         radioBtn2.addActionListener(e -> {
             if (radioBtn2.isSelected()) {
-                System.out.println("Radio button 2 pressed");
                 chat.setSystemPrompt("Give answer long");
                // chat = new OllamaChat("");
             }
