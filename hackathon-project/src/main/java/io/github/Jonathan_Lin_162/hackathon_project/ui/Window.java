@@ -40,7 +40,7 @@ public class Window implements ActionListener {
 
     
     public Window() {        
-        frame = new JFrame("Project Name");
+        frame = new JFrame("Offline AI Assistance");
         frame.setSize(400, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainPanel = new JPanel();
