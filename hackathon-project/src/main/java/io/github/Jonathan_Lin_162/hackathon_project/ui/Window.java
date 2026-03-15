@@ -63,6 +63,19 @@ public class Window implements ActionListener {
         textarea2 = new JTextArea(5, 30);
         scrollPane2 = new JScrollPane(textarea2);
         
+        textarea.setLineWrap(true);
+        textarea.setWrapStyleWord(true);
+
+        textarea2.setLineWrap(true);
+        textarea2.setWrapStyleWord(true);
+        
+        textarea.setBorder(new EmptyBorder(10,10,10,10));
+        textarea2.setBorder(new EmptyBorder(10,10,10,10));
+        
+        textarea2.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textarea2.setEditable(false);
+        textarea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         label.setFont(new Font("Roboto", Font.BOLD, 15));
         label2.setAlignmentX(Component.CENTER_ALIGNMENT);

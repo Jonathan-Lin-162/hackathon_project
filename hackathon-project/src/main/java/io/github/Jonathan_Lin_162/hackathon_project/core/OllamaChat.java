@@ -8,9 +8,7 @@ public class OllamaChat {
     private final List<String> history = new ArrayList<>();
 
     private final String systemPrompt =
-            "You are an AI assistant.\n" +
-            "Keep answers concise." +
-            "Provide an example if necessary";
+            "";
 
     public void addUserMessage(String message) {
         history.add("User: " + message);
