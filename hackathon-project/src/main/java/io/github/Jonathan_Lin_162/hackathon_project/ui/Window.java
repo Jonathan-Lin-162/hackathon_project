@@ -9,6 +9,9 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+import javax.swing.UIManager;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -21,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
@@ -44,18 +48,24 @@ public class Window implements ActionListener {
     private JRadioButton radioBtn1;
     private JRadioButton radioBtn2;
     private OllamaChat chat;
+    private JButton themeToggle;
+    private boolean darkMode = true;
+    private StringBuilder aiBuffer = new StringBuilder();
 
     
     private JLabel label2;
     private JScrollPane scrollPane2;
-    private JTextArea textarea2; // for the ai
+    private JTextPane textarea2; // for the ai
 
     
     public Window() {        
         frame = new JFrame("Offline AI Assistant");
-        frame.setSize(400, 500);
+        frame.setSize(600, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainPanel = new JPanel();
+        
+        themeToggle = new JButton("Light Mode");
+        themeToggle.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
         header = new JLabel("What are you working on?");
         header.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -115,22 +125,24 @@ public class Window implements ActionListener {
         buttonPanel.add(button);
         buttonPanel.add(pause);
         buttonPanel.add(stop);
+        buttonPanel.add(themeToggle);
         buttonPanel.setBackground(new Color(245, 245, 245));
         
         label = new JLabel("Enter your question: ");
         textarea = new JTextArea(5, 30);
+        textarea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         scrollPane = new JScrollPane(textarea);
         
         
         label2 = new JLabel("AI response: ");
-        textarea2 = new JTextArea(5, 30);
+        textarea2 = new JTextPane();
+        textarea2.setContentType("text/html");
+        textarea2.setEditable(false);
         scrollPane2 = new JScrollPane(textarea2);
         
         textarea.setLineWrap(true);
         textarea.setWrapStyleWord(true);
 
-        textarea2.setLineWrap(true);
-        textarea2.setWrapStyleWord(true);
         
         textarea.setBorder(new EmptyBorder(10,10,10,10));
         textarea2.setBorder(new EmptyBorder(10,10,10,10));
@@ -181,15 +193,122 @@ public class Window implements ActionListener {
         	pause.setEnabled(false);
         });
         
+        themeToggle.addActionListener(e -> {
+
+            try {
+
+            	if (darkMode) {
+            	    UIManager.setLookAndFeel(new FlatDarkLaf());
+            	    themeToggle.setText("Light Mode");
+
+            	    mainPanel.setBackground(new Color(30, 30, 30));
+            	    buttonPanel.setBackground(new Color(30,30,30));
+            	    radioPanel.setBackground(new Color(30, 30, 30));
+
+            	    radioBtn1.setBackground(new Color(30, 30, 30));
+            	    radioBtn1.setForeground(Color.WHITE);
+
+            	    radioBtn2.setBackground(new Color(30, 30, 30));
+            	    radioBtn2.setForeground(Color.WHITE);
+
+            	    header.setForeground(Color.WHITE);
+            	    label.setForeground(new Color(212, 212, 212));
+            	    label2.setForeground(new Color(212, 212, 212));
+
+            	    textarea.setForeground(Color.WHITE);
+            	    textarea.setBackground(new Color(45, 45, 45));
+            	    textarea.setCaretColor(Color.WHITE);
+
+            	    textarea2.setForeground(Color.WHITE);
+            	    textarea2.setBackground(new Color(45, 45, 45));
+            	    textarea2.setCaretColor(Color.WHITE);
+
+            	} else {
+            	    UIManager.setLookAndFeel(new FlatLightLaf());
+            	    themeToggle.setText("Dark Mode");
+
+            	    mainPanel.setBackground(new Color(245, 245, 245));
+            	    buttonPanel.setBackground(new Color(245,245,245));
+            	    radioPanel.setBackground(new Color(245, 245, 245));
+
+            	    radioBtn1.setBackground(new Color(245, 245, 245));
+            	    radioBtn1.setForeground(Color.BLACK);
+
+            	    radioBtn2.setBackground(new Color(245, 245, 245));
+            	    radioBtn2.setForeground(Color.BLACK);
+
+            	    header.setForeground(new Color(45, 45, 45));
+            	    label.setForeground(new Color(45, 45, 45));
+            	    label2.setForeground(new Color(45, 45, 45));
+
+            	    textarea.setForeground(Color.BLACK);
+            	    textarea.setBackground(Color.WHITE);
+            	    textarea.setCaretColor(Color.BLACK);
+
+            	    textarea2.setForeground(Color.BLACK);
+            	    textarea2.setBackground(Color.WHITE);
+            	    textarea2.setCaretColor(Color.BLACK);
+            	}
+
+            	darkMode = !darkMode;
+            	SwingUtilities.updateComponentTreeUI(frame);
+            	
+            	String html = markdownToHtml(aiBuffer.toString(), darkMode);
+                textarea2.setText("<html>" + html + "</html>");
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+        });
+        
         frame.add(mainPanel);
         
         frame.setVisible(true);
     }
 
+    private String markdownToHtml(String text, boolean darkMode) {
+
+        String html = text;
+
+        // escape html
+        html = html.replace("&", "&amp;");
+        html = html.replace("<", "&lt;");
+        html = html.replace(">", "&gt;");
+
+        // code block ```
+        String preBg = darkMode ? "#e1e1e1" : "#3b3a3a"; // dark gray for dark mode
+        String preColor = darkMode ? "#000000" : "#ffffff"; // white text in dark mode
+
+        html = html.replaceAll("```([\\s\\S]*?)```",
+            "<pre style='background:" + preBg + ";color:" + preColor + 
+            ";padding:10px;border-radius:6px;font-family:monospace;'>$1</pre>");
+
+        // inline code `
+        String inlineBg = darkMode ? "#b5f5f5" : "#618080"; // slightly darker for inline code
+        String inlineColor = darkMode ? "#000000" : "#ffffff";
+
+        html = html.replaceAll("`(.*?)`",
+            "<code style='background:" + inlineBg + ";color:" + inlineColor + 
+            ";padding:2px 4px;border-radius:4px;font-family:monospace;'>$1</code>");
+
+        // bold
+        html = html.replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>");
+
+        // italic
+        html = html.replaceAll("\\*(.*?)\\*", "<i>$1</i>");
+
+        // line breaks
+        html = html.replace("\n", "<br>");
+
+        return html;
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
 
         String input = textarea.getText();
+        aiBuffer.setLength(0);
         textarea2.setText(""); // clear old response
         
         button.setEnabled(false);
@@ -199,11 +318,16 @@ public class Window implements ActionListener {
         new Thread(() -> {
 
             try {
-
+            	
                 App.execute(input, chunk -> {
 
                     SwingUtilities.invokeLater(() -> {
-                        textarea2.append(chunk);
+                    	
+                    	aiBuffer.append(chunk);
+
+                    	String html = markdownToHtml(aiBuffer.toString(), darkMode);
+
+                    	textarea2.setText("<html>" + html + "</html>");
                     });
 
                 }, chat.getSystemPrompt());
