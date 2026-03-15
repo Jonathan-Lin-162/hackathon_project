@@ -10,18 +10,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import io.github.Jonathan_Lin_162.hackathon_project.core.App;
+import io.github.Jonathan_Lin_162.hackathon_project.core.OllamaChat;
 
 public class Window implements ActionListener {
     // Container for the application
@@ -35,6 +39,11 @@ public class Window implements ActionListener {
     private JButton pause;
     private JButton stop;
     private JPanel buttonPanel;
+    private JPanel radioPanel;
+    private ButtonGroup btnGroup;
+    private JRadioButton radioBtn1;
+    private JRadioButton radioBtn2;
+    private OllamaChat chat;
 
     
     private JLabel label2;
@@ -52,6 +61,44 @@ public class Window implements ActionListener {
         header.setAlignmentX(Component.CENTER_ALIGNMENT);
         header.setFont(new Font("Roboto", Font.BOLD, 25));
         header.setForeground(new Color(45, 45, 45));
+        
+        chat = new OllamaChat();
+        chat.style("Give concise answer.");
+        
+        label = new JLabel("Enter your question: ");
+        textarea = new JTextArea(5, 30);
+        scrollPane = new JScrollPane(textarea);
+        btnGroup = new ButtonGroup();
+        radioBtn1 = new JRadioButton();
+        radioBtn2 = new JRadioButton();
+        radioBtn1.setText("Short");
+        radioBtn1.setSelected(true);
+        radioBtn2.setText("Long");
+        radioBtn1.setBounds(50, 50, 100, 30);
+        radioBtn2.setBounds(50, 80, 100, 30);
+        btnGroup.add(radioBtn1);
+        btnGroup.add(radioBtn2);
+        radioPanel = new JPanel();
+        radioPanel.setMaximumSize(new Dimension(400, 60));
+        radioPanel.setLayout(new BoxLayout(radioPanel, BoxLayout.X_AXIS));
+        radioPanel.setBorder(BorderFactory.createTitledBorder("Select answer length"));
+        radioPanel.add(radioBtn1);
+        radioPanel.add(Box.createRigidArea(new Dimension(0,10)));
+        radioPanel.add(radioBtn2);
+        radioBtn1.addActionListener(e -> {
+            if (radioBtn1.isSelected()) {
+                System.out.println("Radio button 1 pressed");
+                chat.setSystemPrompt("Give concise answer.");
+                //chat = new OllamaChat("Give concise answer.");
+            }
+        });
+        radioBtn2.addActionListener(e -> {
+            if (radioBtn2.isSelected()) {
+                System.out.println("Radio button 2 pressed");
+                chat.setSystemPrompt("Give answer long");
+               // chat = new OllamaChat("");
+            }
+        });
         
         button = new JButton("Go");
         button.addActionListener(this);
@@ -99,6 +146,7 @@ public class Window implements ActionListener {
         label2.setAlignmentX(Component.CENTER_ALIGNMENT);
         label2.setFont(new Font("Roboto", Font.BOLD, 15));
         pause.setEnabled(false);
+        stop.setEnabled(false);
         
         
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -112,6 +160,7 @@ public class Window implements ActionListener {
         mainPanel.add(scrollPane);
         mainPanel.add(Box.createRigidArea(new Dimension(0,10)));
         mainPanel.add(buttonPanel);
+        mainPanel.add(radioPanel);
         mainPanel.add(Box.createRigidArea(new Dimension(0,10)));
         mainPanel.add(label2);
         mainPanel.add(Box.createRigidArea(new Dimension(0,10)));
@@ -147,6 +196,7 @@ public class Window implements ActionListener {
         
         button.setEnabled(false);
         pause.setEnabled(true);
+        stop.setEnabled(true);
         
         new Thread(() -> {
 
@@ -158,7 +208,7 @@ public class Window implements ActionListener {
                         textarea2.append(chunk);
                     });
 
-                });
+                }, chat.getSystemPrompt());
 
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -166,6 +216,7 @@ public class Window implements ActionListener {
             
             SwingUtilities.invokeLater(() -> button.setEnabled(true));
             SwingUtilities.invokeLater(() -> pause.setEnabled(false));
+            SwingUtilities.invokeLater(() -> stop.setEnabled(false));
 
         }).start();
     }

@@ -7,8 +7,11 @@ public class OllamaChat {
 
     private final List<String> history = new ArrayList<>();
 
-    private final String systemPrompt =
-            "";
+    private String systemPrompt = "";
+    
+    public void style(String answerStyle) {
+    	systemPrompt = answerStyle;
+    }
 
     public void addUserMessage(String message) {
         history.add("User: " + message);
@@ -26,5 +29,13 @@ public class OllamaChat {
         }
         sb.append("AI: ");
         return sb.toString();
+    }
+    
+    public void setSystemPrompt(String answerStyle) {
+    	systemPrompt = answerStyle;
+    }
+    
+    public String getSystemPrompt() {
+    	return systemPrompt;
     }
 }

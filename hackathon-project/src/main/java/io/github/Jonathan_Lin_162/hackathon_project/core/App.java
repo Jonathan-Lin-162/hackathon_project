@@ -17,11 +17,12 @@ public class App {
 	
 	private static boolean stop = false;
 
-	public static void execute(String input, java.util.function.Consumer<String> onChunk) throws Exception {
+	public static void execute(String input, java.util.function.Consumer<String> onChunk, String answerStyle) throws Exception {
 
 	    pause = false;
 	    stop = false;
 		
+	    chat.style(answerStyle);
 		chat.addUserMessage(input);
 
 	    String promptText = chat.buildPrompt();
