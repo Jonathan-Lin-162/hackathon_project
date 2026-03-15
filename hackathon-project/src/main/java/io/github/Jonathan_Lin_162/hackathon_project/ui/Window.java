@@ -309,7 +309,7 @@ public class Window implements ActionListener {
 
         String input = textarea.getText();
         aiBuffer.setLength(0);
-        textarea2.setText(""); // clear old response
+        textarea2.setText("Loading..."); 
         
         button.setEnabled(false);
         pause.setEnabled(true);
@@ -322,7 +322,9 @@ public class Window implements ActionListener {
                 App.execute(input, chunk -> {
 
                     SwingUtilities.invokeLater(() -> {
-                    	
+                    	if (textarea2.getText().equals("Loading...")); {
+                    	    textarea2.setText("");
+                    	}
                     	aiBuffer.append(chunk);
 
                     	String html = markdownToHtml(aiBuffer.toString(), darkMode);
