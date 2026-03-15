@@ -12,10 +12,17 @@ public class App {
 	private static OllamaChat chat = new OllamaChat();
 	
 	private static String modelName = "llama3.1";
+	
+	private static boolean pause = false;
+	
+	private static boolean stop = false;
 
 	public static void execute(String input, java.util.function.Consumer<String> onChunk) throws Exception {
 
-	    chat.addUserMessage(input);
+	    pause = false;
+	    stop = false;
+		
+		chat.addUserMessage(input);
 
 	    String promptText = chat.buildPrompt();
 
@@ -42,6 +49,14 @@ public class App {
 	    String line;
 
 	    while ((line = reader.readLine()) != null) {
+	    	
+	    	if (stop) {
+	    		break;
+	    	}
+	    	
+	    	while (pause && !stop) {
+	    		Thread.sleep(100);
+	    	}
 
 	        JSONObject chunk = new JSONObject(line);
 
@@ -60,5 +75,17 @@ public class App {
 	    reader.close();
 
 	    chat.addAssistantMessage(fullResponse.toString());
+	}
+	
+	public static void pause() {
+		pause = true;
+	}
+	
+	public static void resume() {
+		pause = false;
+	}
+	
+	public static void stop() {
+		stop = true;
 	}
 }

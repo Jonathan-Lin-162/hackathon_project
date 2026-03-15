@@ -32,6 +32,9 @@ public class Window implements ActionListener {
     private JPanel mainPanel;
     private JButton button;
     private JLabel header;
+    private JButton pause;
+    private JButton stop;
+    private JPanel buttonPanel;
 
     
     private JLabel label2;
@@ -50,14 +53,29 @@ public class Window implements ActionListener {
         header.setFont(new Font("Roboto", Font.BOLD, 25));
         header.setForeground(new Color(45, 45, 45));
         
-        
-        label = new JLabel("Enter your question: ");
-        textarea = new JTextArea(5, 30);
-        scrollPane = new JScrollPane(textarea);
         button = new JButton("Go");
         button.addActionListener(this);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        pause = new JButton("Pause");
+        pause.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pause.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        stop = new JButton("Stop");
+        stop.setAlignmentX(Component.CENTER_ALIGNMENT);
+        stop.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        buttonPanel = new JPanel();
+        buttonPanel.add(button);
+        buttonPanel.add(pause);
+        buttonPanel.add(stop);
+        buttonPanel.setBackground(new Color(245, 245, 245));
+        
+        label = new JLabel("Enter your question: ");
+        textarea = new JTextArea(5, 30);
+        scrollPane = new JScrollPane(textarea);
+        
         
         label2 = new JLabel("AI response: ");
         textarea2 = new JTextArea(5, 30);
@@ -80,6 +98,8 @@ public class Window implements ActionListener {
         label.setFont(new Font("Roboto", Font.BOLD, 15));
         label2.setAlignmentX(Component.CENTER_ALIGNMENT);
         label2.setFont(new Font("Roboto", Font.BOLD, 15));
+        pause.setEnabled(false);
+        
         
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -91,11 +111,28 @@ public class Window implements ActionListener {
         mainPanel.add(Box.createRigidArea(new Dimension(0,10)));
         mainPanel.add(scrollPane);
         mainPanel.add(Box.createRigidArea(new Dimension(0,10)));
-        mainPanel.add(button);
+        mainPanel.add(buttonPanel);
         mainPanel.add(Box.createRigidArea(new Dimension(0,10)));
         mainPanel.add(label2);
         mainPanel.add(Box.createRigidArea(new Dimension(0,10)));
         mainPanel.add(scrollPane2);
+        
+        pause.addActionListener(e -> {
+        	if (pause.getText().equals("Pause")) {
+        		App.pause();
+        		pause.setText("Resume");
+        	} else {
+        		App.resume();
+        		pause.setText("Pause");
+        	}
+        });
+        
+        stop.addActionListener(e -> {
+        	App.stop();
+        	textarea2.setText("");
+        	button.setEnabled(true);
+        	pause.setEnabled(false);
+        });
         
         frame.add(mainPanel);
         
@@ -107,7 +144,10 @@ public class Window implements ActionListener {
 
         String input = textarea.getText();
         textarea2.setText(""); // clear old response
-
+        
+        button.setEnabled(false);
+        pause.setEnabled(true);
+        
         new Thread(() -> {
 
             try {
@@ -123,8 +163,13 @@ public class Window implements ActionListener {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+            
+            SwingUtilities.invokeLater(() -> button.setEnabled(true));
+            SwingUtilities.invokeLater(() -> pause.setEnabled(false));
 
         }).start();
     }
+    
+    
 
 }
