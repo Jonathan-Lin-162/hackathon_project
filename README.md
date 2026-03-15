@@ -2,7 +2,7 @@
 
 Description
 -
-An offline AI assistant that allows input of a question and then generates the reponse.
+An offline AI assistant that allows users to enter a question and receive a generated response through a graphical user interface (GUI). The application uses Java Swing for the GUI and Ollama to run language models locally without requiring an internet connection.
 
 How to Use
 -
